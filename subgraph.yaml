@@ -1,0 +1,141 @@
+specVersion: 0.0.2
+description: A creative blockchain platform for independent creators, fans, and brands to exchange services directly and earn incentives through DeFi.
+repository: https://github.com/g2entgroup/creative-subgraph-v2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: CreativeNFT
+    network: mumbai
+    source:
+      address: "0x9572de95279655d093a3625881721C560175e84C"
+      abi: CreativeNFT
+      startBlock: 17986612
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+          - Token
+          - User
+      abis:
+        - name: CreativeNFT
+          file: ./abis/CreativeNFT.json
+      eventHandlers:
+        - event: _baseURI() internal view virtual override returns (string memory)
+          handler: _baseURI()
+        - event: mint(address to)
+          handler: mint
+        - event: pause()
+          handler: pause
+        - event: unpause()
+          handler: unpause
+        - events: _beforeTokenTransfer(address from, address to, uint256 tokenId)
+          handler: _beforeTokenTransfer
+        - events: supportsInterface(bytes interfaceId)
+          handler: supportsInterface
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: PoolFactory
+    network: mumbai
+    source:
+      address: "0xd34437a43C484B13b017d5172eeEaA40E0B845ba"
+      abi: PoolFactory
+      startBlock: 17986616
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+          - Token
+          - User
+      abis:
+        - name: PoolFactory
+          file: ./abis/PoolFactory.json
+        - name: Pool
+          file: ./abis/Pool.json
+      eventHandlers:
+        - event: PoolCreated(address Pool,address PoolOwner,uint256 SubmissionEndTime,uint256 FanVotingEndTime,uint256 BrandVotingEndTime,uint256 CampaignEndtime,uint256 PoolId)
+          handler: PoolCreated
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: Pool
+    network: mumbai
+    source:
+      address: "0xfA5F40eE92130196dA574f07536428084F705b3D"
+      abi: Pool
+      startBlock: 17971885
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+          - Token
+          - User
+      abis:
+        - name: Pool
+          file: ./abis/Pool.json
+        - name: RandomNumberConsumer
+          file: ./abis/RandomNumberConsumer.json
+      eventHandlers:
+        - event: PoolBacked(address PoolAddress,string PoolName,string BrandName,bool BackedByFunds)
+          handler: PoolBacked
+        - event: PoolNameChanged(address PoolAddress,string PoolName,string BrandName)
+          handler: PoolNameChanged
+        - event: SubmissionCreated(address PoolAddress,string PoolName,string BrandName,uint256 SubmissionNumber,address ArtistAddress,uint256[3] NFTsInSubmission)
+          handler: SubmissionCreated
+        - event: VoteSubmitted(address PoolAddress,string PoolName,string BrandName,uint256 SubmissionNumber,address Voter,uint256 NewVoteCount)
+          handler: VoteSubmitted
+        - event: NewTopTen(address PoolAddress,string PoolName,string BrandName,uint256[10] TopTen)
+          handler: NewTopTen
+        - event: SeeFinalists(address PoolAddress,string PoolName,string BrandName,uint256[] Finalists)
+          handler: SeeFinalists
+        - event: WinnerSelected(address PoolAddress,string PoolName,string BrandName,uint256 Winner)
+          handler: WinnerSelected
+        - event: CashedOut(address PoolAddress,string PoolName,string BrandName,uint256 SubmissionNumber,address Caller)
+          handler: CashedOut
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: RandomNumberConsumer
+    network: mumbai
+    source:
+      address: "0xEA69aD73011E39E223873214a1F98aFF008A8ab6"
+      abi: RandomNumberConsumer
+      startBlock: 17986603
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+          - Token
+          - User
+      abis:
+        - name: RandomNumberConsumer
+          file: ./abis/RandomNumberConsumer.json
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: twitterVerify
+    network: mumbai
+    source:
+      address: "0x375854B2AeA7fa00bfF23a4Ca582D464c0d6d8fE"
+      abi: twitterVerify
+      startBlock: 17986599
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+          - Token
+          - User
+      abis:
+        - name: twitterVerify
+          file: ./abis/twitterVerify.json
+      eventHandlers:
+        - event: AttemptToVerify(bytes32 requestId,string twitterHandle,address user)
+          handler: AttepmToVerify
+        - event: VerificationSuccess(bytes32 requestId,string twitterHandle,address user)
+          handler: VerificationSuccess
+        - event: VerificationFailed(bytes32 requestId)
+          handler: VerificationFailed
+      file: ./src/mapping.ts
+  
